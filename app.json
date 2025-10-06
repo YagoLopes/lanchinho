@@ -1,0 +1,47 @@
+{
+  "expo": {
+    "name": "Lanchinho",
+    "slug": "lanchinho",
+    "scheme": "lanchinho",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#FFEDD5"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#FFEDD5"
+      },
+      "package": "com.lanchinho.app"
+    },
+    "web": {
+      "bundler": "metro",
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/notification-icon.png",
+          "color": "#EA580C"
+        }
+      ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "fc01f6b3-0b37-40d9-96c0-5f04a607590b"
+      }
+    }
+  }
+}
