@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { immer } from 'zustand/middleware/immer';
-import { AppConfig, Dieta, ExportPayload, HistoricoItem } from '@types/diet';
+import { AppConfig, Dieta, ExportPayload, HistoricoItem } from '../types/diet';
 import {
   loadPersistedData,
   persistConfig,
@@ -42,7 +42,11 @@ type DietStore = {
   deleteDiet: (dietId: string) => Promise<void>;
   duplicateDiet: (dietId: string) => Promise<Dieta | null>;
   setActiveDiet: (dietId: string) => Promise<void>;
-  toggleMealAlarm: (dietId: string, mealId: string, active: boolean) => Promise<void>;
+  toggleMealAlarm: (
+    dietId: string,
+    mealId: string,
+    active: boolean
+  ) => Promise<void>;
   ensureDailyHistory: (dateISO: string, mealIds: string[]) => Promise<void>;
   markMeal: (mealId: string, dateISO: string, feita: boolean) => Promise<void>;
   toggleMealDone: (mealId: string, dateISO: string) => Promise<boolean>;
@@ -52,7 +56,10 @@ type DietStore = {
   applyImportedPayload: (payload: ExportPayload) => Promise<void>;
 };
 
-const updateDietNotificationIds = (diet: Dieta, mapping: Record<string, string | undefined>) => {
+const updateDietNotificationIds = (
+  diet: Dieta,
+  mapping: Record<string, string | undefined>
+) => {
   diet.dias.forEach((dia) => {
     dia.refeicoes.forEach((meal) => {
       if (mapping[meal.id] !== undefined) {
@@ -103,7 +110,9 @@ export const useDietStore = create<DietStore>()(
         if (refreshed) {
           const mapping = await rescheduleAllForActiveDiet(refreshed);
           set((state) => {
-            const target = state.dietas.find((diet) => diet.id === refreshed.id);
+            const target = state.dietas.find(
+              (diet) => diet.id === refreshed.id
+            );
             if (target) updateDietNotificationIds(target, mapping);
           });
           await persistDietas(get().dietas);
@@ -178,7 +187,9 @@ export const useDietStore = create<DietStore>()(
       await persistDietas(get().dietas);
 
       if (wasActive && get().config.notificationsEnabled) {
-        const fallback = get().dietas.find((diet) => diet.id === get().activeDietId);
+        const fallback = get().dietas.find(
+          (diet) => diet.id === get().activeDietId
+        );
         if (fallback) {
           const mapping = await rescheduleAllForActiveDiet(fallback);
           set((state) => {
@@ -267,10 +278,15 @@ export const useDietStore = create<DietStore>()(
       if (!get().config.notificationsEnabled || !targetDiet.ativa) return;
 
       const updatedDiet = get().dietas.find((d) => d.id === dietId);
-      const sourceMeal = updatedDiet?.dias.flatMap((dia) => dia.refeicoes).find((m) => m.id === mealId);
+      const sourceMeal = updatedDiet?.dias
+        .flatMap((dia) => dia.refeicoes)
+        .find((m) => m.id === mealId);
       if (!updatedDiet || !sourceMeal) return;
 
-      const notificationId = await rescheduleMealNotification(updatedDiet, sourceMeal);
+      const notificationId = await rescheduleMealNotification(
+        updatedDiet,
+        sourceMeal
+      );
       set((state) => {
         const diet = state.dietas.find((d) => d.id === dietId);
         diet?.dias.forEach((dia) => {
@@ -287,11 +303,13 @@ export const useDietStore = create<DietStore>()(
     ensureDailyHistory: async (dateISO, mealIds) => {
       set((state) => {
         mealIds.forEach((mealId) => {
-          const exists = state.historico.some((item) => item.dataISO === dateISO && item.refeicaoId === mealId);
+          const exists = state.historico.some(
+            (item) => item.dataISO === dateISO && item.refeicaoId === mealId
+          );
           if (!exists) {
             state.historico.push({
               id: `${dateISO}-${mealId}`,
-              dataISO,
+              dataISO: dateISO,
               refeicaoId: mealId,
               feita: false,
             });
@@ -304,14 +322,14 @@ export const useDietStore = create<DietStore>()(
     markMeal: async (mealId, dateISO, feita) => {
       set((state) => {
         const entry = state.historico.find(
-          (item) => item.dataISO === dateISO && item.refeicaoId === mealId,
+          (item) => item.dataISO === dateISO && item.refeicaoId === mealId
         );
         if (entry) {
           entry.feita = feita;
         } else {
           state.historico.push({
             id: `${dateISO}-${mealId}`,
-            dataISO,
+            dataISO: dateISO,
             refeicaoId: mealId,
             feita,
           });
@@ -324,7 +342,7 @@ export const useDietStore = create<DietStore>()(
       let updatedStatus = false;
       set((state) => {
         const entry = state.historico.find(
-          (item) => item.dataISO === dateISO && item.refeicaoId === mealId,
+          (item) => item.dataISO === dateISO && item.refeicaoId === mealId
         );
         if (entry) {
           entry.feita = !entry.feita;
@@ -332,7 +350,7 @@ export const useDietStore = create<DietStore>()(
         } else {
           state.historico.push({
             id: `${dateISO}-${mealId}`,
-            dataISO,
+            dataISO: dateISO,
             refeicaoId: mealId,
             feita: true,
           });
@@ -353,7 +371,9 @@ export const useDietStore = create<DietStore>()(
 
       if (partial.notificationsEnabled === undefined) return;
 
-      const activeDiet = get().dietas.find((diet) => diet.id === get().activeDietId);
+      const activeDiet = get().dietas.find(
+        (diet) => diet.id === get().activeDietId
+      );
       if (!activeDiet) return;
 
       if (partial.notificationsEnabled) {
@@ -418,7 +438,8 @@ export const useDietStore = create<DietStore>()(
         }));
         state.historico = merged.historico;
         state.config = merged.config;
-        const activeId = state.dietas.find((diet) => diet.ativa)?.id ?? state.dietas[0]?.id;
+        const activeId =
+          state.dietas.find((diet) => diet.ativa)?.id ?? state.dietas[0]?.id;
         state.activeDietId = activeId;
         state.dietas.forEach((diet) => {
           diet.ativa = diet.id === activeId;
@@ -429,7 +450,9 @@ export const useDietStore = create<DietStore>()(
       await persistConfig(get().config);
 
       if (get().config.notificationsEnabled) {
-        const active = get().dietas.find((diet) => diet.id === get().activeDietId);
+        const active = get().dietas.find(
+          (diet) => diet.id === get().activeDietId
+        );
         if (active) {
           const mapping = await rescheduleAllForActiveDiet(active);
           set((state) => {
