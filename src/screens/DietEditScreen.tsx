@@ -1,14 +1,28 @@
 import { useEffect, useMemo, useState } from 'react';
-import { ScrollView, StyleSheet, Text, TextInput, View, Switch, Pressable } from 'react-native';
+import {
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+  Switch,
+  Pressable,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import Toast from 'react-native-toast-message';
 import { RootStackParamList } from '@navigation/AppNavigator';
 import { useThemeColors } from '@hooks/useTheme';
 import { useDietStore } from '@store/dietStore';
-import { DAYS_OF_WEEK, buildDayPlans, flattenMeals, formatHourMinute, isValidTime } from '@utils/time';
+import {
+  DAYS_OF_WEEK,
+  buildDayPlans,
+  flattenMeals,
+  formatHourMinute,
+  isValidTime,
+} from '@utils/time';
 import { generateId } from '@utils/id';
-import { Dieta, Macros, Objetivo, Refeicao } from '@types/diet';
+import { Dieta, Macros, Objetivo, Refeicao } from '../types/diet';
 
 const objetivoOptions: { value: Objetivo; label: string }[] = [
   { value: 'BULKING', label: 'Bulking' },
@@ -17,7 +31,7 @@ const objetivoOptions: { value: Objetivo; label: string }[] = [
   { value: 'CUSTOM', label: 'Custom' },
 ];
 
-type DayKey = typeof DAYS_OF_WEEK[number]['key'];
+type DayKey = (typeof DAYS_OF_WEEK)[number]['key'];
 
 type MealForm = {
   id: string;
@@ -51,7 +65,10 @@ const DietEditScreen = ({ route, navigation }: Props) => {
   const diets = useDietStore((state) => state.dietas);
   const saveDiet = useDietStore((state) => state.saveDiet);
 
-  const editingDiet = useMemo(() => diets.find((diet) => diet.id === dietId), [dietId, diets]);
+  const editingDiet = useMemo(
+    () => diets.find((diet) => diet.id === dietId),
+    [dietId, diets]
+  );
 
   const [nome, setNome] = useState('');
   const [descricao, setDescricao] = useState('');
@@ -78,7 +95,7 @@ const DietEditScreen = ({ route, navigation }: Props) => {
           alarmeAtivo: meal.alarmeAtivo,
           repetirEm: [...meal.repetirEm],
           notificationId: meal.notificationId,
-        })),
+        }))
       );
     } else {
       setNome('');
@@ -90,11 +107,17 @@ const DietEditScreen = ({ route, navigation }: Props) => {
 
   const updateMealField = (id: string, field: keyof MealForm, value: any) => {
     setMeals((current) =>
-      current.map((meal) => (meal.id === id ? { ...meal, [field]: value } : meal)),
+      current.map((meal) =>
+        meal.id === id ? { ...meal, [field]: value } : meal
+      )
     );
   };
 
-  const updateMacroField = (id: string, field: keyof MealForm['macros'], value: string) => {
+  const updateMacroField = (
+    id: string,
+    field: keyof MealForm['macros'],
+    value: string
+  ) => {
     setMeals((current) =>
       current.map((meal) =>
         meal.id === id
@@ -105,8 +128,8 @@ const DietEditScreen = ({ route, navigation }: Props) => {
                 [field]: value,
               },
             }
-          : meal,
-      ),
+          : meal
+      )
     );
   };
 
@@ -119,7 +142,7 @@ const DietEditScreen = ({ route, navigation }: Props) => {
           ? meal.repetirEm.filter((day) => day !== dayKey)
           : [...meal.repetirEm, dayKey];
         return { ...meal, repetirEm: nextDays };
-      }),
+      })
     );
   };
 
@@ -143,15 +166,24 @@ const DietEditScreen = ({ route, navigation }: Props) => {
 
     for (const meal of meals) {
       if (!meal.nome.trim()) {
-        Toast.show({ type: 'error', text1: 'Informe o nome de todas as refeicoes.' });
+        Toast.show({
+          type: 'error',
+          text1: 'Informe o nome de todas as refeicoes.',
+        });
         return null;
       }
       if (!isValidTime(meal.horario)) {
-        Toast.show({ type: 'error', text1: `Horario invalido em ${meal.nome}. Use HH:mm.` });
+        Toast.show({
+          type: 'error',
+          text1: `Horario invalido em ${meal.nome}. Use HH:mm.`,
+        });
         return null;
       }
       if (!meal.repetirEm.length) {
-        Toast.show({ type: 'error', text1: `Selecione os dias da refeicao ${meal.nome}.` });
+        Toast.show({
+          type: 'error',
+          text1: `Selecione os dias da refeicao ${meal.nome}.`,
+        });
         return null;
       }
     }
@@ -193,7 +225,9 @@ const DietEditScreen = ({ route, navigation }: Props) => {
   };
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: colors.background }]}
+    >
       <ScrollView contentContainerStyle={styles.content}>
         <Text style={[styles.label, { color: colors.muted }]}>Nome</Text>
         <TextInput
@@ -201,7 +235,14 @@ const DietEditScreen = ({ route, navigation }: Props) => {
           onChangeText={setNome}
           placeholder="Nome da dieta"
           placeholderTextColor={colors.muted}
-          style={[styles.input, { color: colors.text, borderColor: colors.border, backgroundColor: colors.card }]}
+          style={[
+            styles.input,
+            {
+              color: colors.text,
+              borderColor: colors.border,
+              backgroundColor: colors.card,
+            },
+          ]}
         />
 
         <Text style={[styles.label, { color: colors.muted }]}>Objetivo</Text>
@@ -214,7 +255,8 @@ const DietEditScreen = ({ route, navigation }: Props) => {
                 styles.chip,
                 {
                   borderColor: colors.border,
-                  backgroundColor: objetivo === option.value ? colors.primary : colors.card,
+                  backgroundColor:
+                    objetivo === option.value ? colors.primary : colors.card,
                 },
               ]}
             >
@@ -239,73 +281,133 @@ const DietEditScreen = ({ route, navigation }: Props) => {
           style={[
             styles.input,
             styles.multiline,
-            { color: colors.text, borderColor: colors.border, backgroundColor: colors.card },
+            {
+              color: colors.text,
+              borderColor: colors.border,
+              backgroundColor: colors.card,
+            },
           ]}
           multiline
         />
 
         <View style={styles.sectionHeader}>
-          <Text style={[styles.sectionTitle, { color: colors.text }]}>Refeicoes</Text>
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>
+            Refeicoes
+          </Text>
           <Pressable accessibilityRole="button" onPress={addMeal}>
-            <Text style={{ color: colors.primary, fontWeight: '600' }}>Adicionar</Text>
+            <Text style={{ color: colors.primary, fontWeight: '600' }}>
+              Adicionar
+            </Text>
           </Pressable>
         </View>
 
         {meals.map((meal) => (
-          <View key={meal.id} style={[styles.mealCard, { borderColor: colors.border, backgroundColor: colors.card }]}>
+          <View
+            key={meal.id}
+            style={[
+              styles.mealCard,
+              { borderColor: colors.border, backgroundColor: colors.card },
+            ]}
+          >
             <View style={styles.mealHeader}>
               <TextInput
                 value={meal.nome}
-                onChangeText={(value) => updateMealField(meal.id, 'nome', value)}
+                onChangeText={(value) =>
+                  updateMealField(meal.id, 'nome', value)
+                }
                 placeholder="Nome da refeicao"
                 placeholderTextColor={colors.muted}
-                style={[styles.mealTitleInput, { color: colors.text, borderColor: colors.border }]}
+                style={[
+                  styles.mealTitleInput,
+                  { color: colors.text, borderColor: colors.border },
+                ]}
               />
-              <Pressable accessibilityRole="button" onPress={() => removeMeal(meal.id)}>
+              <Pressable
+                accessibilityRole="button"
+                onPress={() => removeMeal(meal.id)}
+              >
                 <Text style={{ color: colors.danger }}>Remover</Text>
               </Pressable>
             </View>
 
             <View style={styles.row}>
               <View style={styles.rowItem}>
-                <Text style={[styles.label, { color: colors.muted }]}>Horario</Text>
+                <Text style={[styles.label, { color: colors.muted }]}>
+                  Horario
+                </Text>
                 <TextInput
                   value={meal.horario}
-                  onChangeText={(value) => updateMealField(meal.id, 'horario', value)}
+                  onChangeText={(value) =>
+                    updateMealField(meal.id, 'horario', value)
+                  }
                   placeholder="HH:mm"
                   placeholderTextColor={colors.muted}
-                  style={[styles.input, { color: colors.text, borderColor: colors.border, backgroundColor: colors.background }]}
+                  style={[
+                    styles.input,
+                    {
+                      color: colors.text,
+                      borderColor: colors.border,
+                      backgroundColor: colors.background,
+                    },
+                  ]}
                 />
               </View>
               <View style={styles.rowItem}>
-                <Text style={[styles.label, { color: colors.muted }]}>Alarme</Text>
+                <Text style={[styles.label, { color: colors.muted }]}>
+                  Alarme
+                </Text>
                 <View style={styles.switchWrapper}>
                   <Switch
                     value={meal.alarmeAtivo}
-                    onValueChange={(value) => updateMealField(meal.id, 'alarmeAtivo', value)}
+                    onValueChange={(value) =>
+                      updateMealField(meal.id, 'alarmeAtivo', value)
+                    }
                   />
                 </View>
               </View>
             </View>
 
-            <Text style={[styles.label, { color: colors.muted, marginTop: 12 }]}>Macros</Text>
+            <Text
+              style={[styles.label, { color: colors.muted, marginTop: 12 }]}
+            >
+              Macros
+            </Text>
             <View style={styles.macroRow}>
               {(['kcal', 'protein', 'carbs', 'fat'] as const).map((field) => (
                 <View key={field} style={styles.macroItem}>
-                  <Text style={[styles.macroLabel, { color: colors.muted }]}>{field.toUpperCase()}</Text>
+                  <Text style={[styles.macroLabel, { color: colors.muted }]}>
+                    {field.toUpperCase()}
+                  </Text>
                   <TextInput
                     value={meal.macros[field]}
-                    onChangeText={(value) => updateMacroField(meal.id, field, value.replace(/[^0-9]/g, ''))}
+                    onChangeText={(value) =>
+                      updateMacroField(
+                        meal.id,
+                        field,
+                        value.replace(/[^0-9]/g, '')
+                      )
+                    }
                     keyboardType="numeric"
                     placeholder="0"
                     placeholderTextColor={colors.muted}
-                    style={[styles.input, { color: colors.text, borderColor: colors.border, backgroundColor: colors.background }]}
+                    style={[
+                      styles.input,
+                      {
+                        color: colors.text,
+                        borderColor: colors.border,
+                        backgroundColor: colors.background,
+                      },
+                    ]}
                   />
                 </View>
               ))}
             </View>
 
-            <Text style={[styles.label, { color: colors.muted, marginTop: 12 }]}>Dias</Text>
+            <Text
+              style={[styles.label, { color: colors.muted, marginTop: 12 }]}
+            >
+              Dias
+            </Text>
             <View style={styles.row}>
               {DAYS_OF_WEEK.map((day) => (
                 <Pressable
@@ -315,11 +417,19 @@ const DietEditScreen = ({ route, navigation }: Props) => {
                     styles.dayChip,
                     {
                       borderColor: colors.border,
-                      backgroundColor: meal.repetirEm.includes(day.key) ? colors.primary : colors.background,
+                      backgroundColor: meal.repetirEm.includes(day.key)
+                        ? colors.primary
+                        : colors.background,
                     },
                   ]}
                 >
-                  <Text style={{ color: meal.repetirEm.includes(day.key) ? '#FFFFFF' : colors.text }}>
+                  <Text
+                    style={{
+                      color: meal.repetirEm.includes(day.key)
+                        ? '#FFFFFF'
+                        : colors.text,
+                    }}
+                  >
                     {day.short}
                   </Text>
                 </Pressable>
@@ -328,7 +438,11 @@ const DietEditScreen = ({ route, navigation }: Props) => {
           </View>
         ))}
 
-        <Pressable accessibilityRole="button" onPress={save} style={[styles.saveButton, { backgroundColor: colors.primary }]}>
+        <Pressable
+          accessibilityRole="button"
+          onPress={save}
+          style={[styles.saveButton, { backgroundColor: colors.primary }]}
+        >
           <Text style={styles.saveButtonText}>Salvar dieta</Text>
         </Pressable>
       </ScrollView>

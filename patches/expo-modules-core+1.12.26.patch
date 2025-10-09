@@ -1,0 +1,12 @@
+diff --git a/node_modules/expo-modules-core/android/src/main/java/expo/modules/kotlin/types/JSTypeConverterHelper.kt b/node_modules/expo-modules-core/android/src/main/java/expo/modules/kotlin/types/JSTypeConverterHelper.kt
+index 9e9be54..820b477 100644
+--- a/node_modules/expo-modules-core/android/src/main/java/expo/modules/kotlin/types/JSTypeConverterHelper.kt
++++ b/node_modules/expo-modules-core/android/src/main/java/expo/modules/kotlin/types/JSTypeConverterHelper.kt
+@@ -41,6 +41,7 @@ fun Bundle.toJSValue(containerProvider: JSTypeConverter.ContainerProvider): Writ
+   val result = containerProvider.createMap()
+ 
+   for (key in keySet()) {
++    @Suppress("DEPRECATION")
+     val value = get(key)
+     val convertedValue = JSTypeConverter.convertToJSValue(value, containerProvider)
+     result.putGeneric(key, convertedValue)

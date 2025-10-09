@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import { Pressable, StyleSheet, Switch, Text, View } from 'react-native';
-import { Refeicao } from '@types/diet';
+import { Refeicao } from '../types/diet';
 import { useThemeColors } from '@hooks/useTheme';
 
 export type MealStatus = 'done' | 'late' | 'upcoming';
@@ -28,14 +28,27 @@ export const MealItem: FC<MealItemProps> = ({
 }) => {
   const colors = useThemeColors();
   const borderColor =
-    status === 'done' ? colors.success : status === 'late' ? colors.danger : colors.border;
+    status === 'done'
+      ? colors.success
+      : status === 'late'
+        ? colors.danger
+        : colors.border;
 
   return (
-    <View style={[styles.container, { borderColor, backgroundColor: colors.card }]}>
+    <View
+      style={[styles.container, { borderColor, backgroundColor: colors.card }]}
+    >
       <View style={styles.headerRow}>
         <View style={styles.titleGroup}>
-          <Text style={[styles.title, { color: colors.text }]}>{meal.nome}</Text>
-          <Text style={[styles.time, { color: status === 'late' ? colors.danger : colors.muted }]}>
+          <Text style={[styles.title, { color: colors.text }]}>
+            {meal.nome}
+          </Text>
+          <Text
+            style={[
+              styles.time,
+              { color: status === 'late' ? colors.danger : colors.muted },
+            ]}
+          >
             {meal.horario}
           </Text>
         </View>
@@ -55,9 +68,14 @@ export const MealItem: FC<MealItemProps> = ({
         <Pressable
           accessibilityRole="button"
           onPress={onToggleDone}
-          style={[styles.primaryButton, { backgroundColor: isDone ? colors.success : colors.primary }]}
+          style={[
+            styles.primaryButton,
+            { backgroundColor: isDone ? colors.success : colors.primary },
+          ]}
         >
-          <Text style={styles.primaryButtonText}>{isDone ? 'Comida' : 'Marcar como comida'}</Text>
+          <Text style={styles.primaryButtonText}>
+            {isDone ? 'Comida' : 'Marcar como comida'}
+          </Text>
         </Pressable>
 
         <View style={styles.snoozeGroup}>
@@ -70,14 +88,17 @@ export const MealItem: FC<MealItemProps> = ({
                 styles.snoozeButton,
                 {
                   borderColor: colors.border,
-                  backgroundColor: minutes === defaultSnooze ? colors.primary : 'transparent',
+                  backgroundColor:
+                    minutes === defaultSnooze ? colors.primary : 'transparent',
                 },
               ]}
             >
               <Text
                 style={[
                   styles.snoozeText,
-                  { color: minutes === defaultSnooze ? '#FFFFFF' : colors.muted },
+                  {
+                    color: minutes === defaultSnooze ? '#FFFFFF' : colors.muted,
+                  },
                 ]}
               >
                 {minutes}m

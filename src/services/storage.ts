@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { AppConfig, Dieta, HistoricoItem } from '@types/diet';
+import { AppConfig, Dieta, HistoricoItem } from '../types/diet';
 
 type EntityWithId = { id: string };
 
@@ -34,7 +34,10 @@ export async function setItem<T>(key: StorageKey, value: T) {
   }
 }
 
-export const mergeById = <T extends EntityWithId>(existing: T[], incoming: T[]) => {
+export const mergeById = <T extends EntityWithId>(
+  existing: T[],
+  incoming: T[]
+) => {
   const map = new Map<string, T>();
   existing.forEach((item) => map.set(item.id, item));
   incoming.forEach((item) => map.set(item.id, item));
@@ -55,5 +58,6 @@ export const loadPersistedData = async () => {
 };
 
 export const persistDietas = (dietas: Dieta[]) => setItem(DIETS_KEY, dietas);
-export const persistHistorico = (historico: HistoricoItem[]) => setItem(HISTORY_KEY, historico);
+export const persistHistorico = (historico: HistoricoItem[]) =>
+  setItem(HISTORY_KEY, historico);
 export const persistConfig = (config: AppConfig) => setItem(CONFIG_KEY, config);

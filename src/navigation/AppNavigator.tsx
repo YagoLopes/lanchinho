@@ -24,7 +24,10 @@ export type TabParamList = {
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<TabParamList>();
 
-const TAB_ICONS: Record<keyof TabParamList, { active: string; inactive: string }> = {
+const TAB_ICONS: Record<
+  keyof TabParamList,
+  { active: string; inactive: string }
+> = {
   Hoje: { active: 'fast-food', inactive: 'fast-food-outline' },
   Dietas: { active: 'restaurant', inactive: 'restaurant-outline' },
   Progresso: { active: 'stats-chart', inactive: 'stats-chart-outline' },
@@ -53,10 +56,15 @@ const TabsNavigator = () => {
         tabBarIcon: ({ focused, color, size }) => {
           const mapping = TAB_ICONS[route.name as keyof TabParamList];
           const iconName = focused ? mapping.active : mapping.inactive;
-          return <Ionicons name={iconName} size={size} color={color} />;
+          return <Ionicons name={iconName as any} size={size} color={color} />;
         },
         tabBarLabel: ({ focused, color }) => (
-          <Text style={{ color: focused ? colors.primary : colors.muted, fontWeight: focused ? '600' : '500' }}>
+          <Text
+            style={{
+              color: focused ? colors.primary : colors.muted,
+              fontWeight: focused ? '600' : '500',
+            }}
+          >
             {TAB_LABELS[route.name as keyof TabParamList]}
           </Text>
         ),
@@ -71,7 +79,11 @@ const TabsNavigator = () => {
 };
 const AppNavigator = () => (
   <Stack.Navigator>
-    <Stack.Screen name="MainTabs" component={TabsNavigator} options={{ headerShown: false }} />
+    <Stack.Screen
+      name="MainTabs"
+      component={TabsNavigator}
+      options={{ headerShown: false }}
+    />
     <Stack.Screen
       name="DietEdit"
       component={DietEditScreen}

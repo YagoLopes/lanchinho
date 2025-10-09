@@ -1,10 +1,10 @@
 import * as Notifications from 'expo-notifications';
 import { Platform } from 'react-native';
-import { DiaSemana, Dieta, Refeicao } from '@types/diet';
+import { DiaSemana, Dieta, Refeicao } from '../types/diet';
 import { dayKeyToWeekday, parseTime, splitNotificationIds } from '@utils/time';
 
 const MEAL_CATEGORY = 'meal-reminder';
-const ALL_DAYS: DiaSemana[] = ['DOM','SEG','TER','QUA','QUI','SEX','SAB'];
+const ALL_DAYS: DiaSemana[] = ['DOM', 'SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SAB'];
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -30,7 +30,8 @@ export const registerNotificationCategories = async () => {
 export const requestNotificationPermissions = async (): Promise<boolean> => {
   const settings = await Notifications.getPermissionsAsync();
   const alreadyGranted =
-    settings.granted || settings.ios?.status === Notifications.IosAuthorizationStatus.PROVISIONAL;
+    settings.granted ||
+    settings.ios?.status === Notifications.IosAuthorizationStatus.PROVISIONAL;
 
   if (Platform.OS === 'android') {
     await Notifications.setNotificationChannelAsync('lanchinho-default', {
@@ -59,10 +60,15 @@ export const requestNotificationPermissions = async (): Promise<boolean> => {
 
 export const cancelMealNotification = async (notificationId?: string) => {
   const ids = splitNotificationIds(notificationId);
-  await Promise.all(ids.map((id) => Notifications.cancelScheduledNotificationAsync(id)));
+  await Promise.all(
+    ids.map((id) => Notifications.cancelScheduledNotificationAsync(id))
+  );
 };
 
-export const scheduleMealNotifications = async (dieta: Dieta, meal: Refeicao) => {
+export const scheduleMealNotifications = async (
+  dieta: Dieta,
+  meal: Refeicao
+) => {
   const { hour, minute } = parseTime(meal.horario);
   const days = meal.repetirEm.length ? meal.repetirEm : ALL_DAYS;
   const ids: string[] = [];
@@ -93,7 +99,10 @@ export const scheduleMealNotifications = async (dieta: Dieta, meal: Refeicao) =>
   return ids.join('|');
 };
 
-export const rescheduleMealNotification = async (dieta: Dieta, meal: Refeicao) => {
+export const rescheduleMealNotification = async (
+  dieta: Dieta,
+  meal: Refeicao
+) => {
   await cancelMealNotification(meal.notificationId);
   if (!meal.alarmeAtivo) return undefined;
   return scheduleMealNotifications(dieta, meal);
@@ -118,9 +127,15 @@ export const scheduleDietNotifications = async (dieta: Dieta) => {
 export const cancelDietNotifications = async (dieta: Dieta) => {
   const ids = new Set<string>();
   dieta.dias.forEach((dia) => {
-    dia.refeicoes.forEach((meal) => splitNotificationIds(meal.notificationId).forEach((id) => ids.add(id)));
+    dia.refeicoes.forEach((meal) =>
+      splitNotificationIds(meal.notificationId).forEach((id) => ids.add(id))
+    );
   });
-  await Promise.all(Array.from(ids).map((id) => Notifications.cancelScheduledNotificationAsync(id)));
+  await Promise.all(
+    Array.from(ids).map((id) =>
+      Notifications.cancelScheduledNotificationAsync(id)
+    )
+  );
 };
 
 export const rescheduleAllForActiveDiet = async (dieta: Dieta) => {
@@ -128,7 +143,10 @@ export const rescheduleAllForActiveDiet = async (dieta: Dieta) => {
   return scheduleDietNotifications(dieta);
 };
 
-export const scheduleSnoozeNotification = async (meal: Refeicao, minutes: number) => {
+export const scheduleSnoozeNotification = async (
+  meal: Refeicao,
+  minutes: number
+) => {
   const trigger = new Date(Date.now() + minutes * 60 * 1000);
   return Notifications.scheduleNotificationAsync({
     content: {

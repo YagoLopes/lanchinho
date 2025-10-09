@@ -12,9 +12,7 @@
       "resizeMode": "contain",
       "backgroundColor": "#FFEDD5"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true
     },
@@ -36,12 +34,26 @@
           "icon": "./assets/notification-icon.png",
           "color": "#EA580C"
         }
+      ],
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "compileSdkVersion": 34,
+            "targetSdkVersion": 34,
+            "buildToolsVersion": "34.0.0"
+          }
+        }
       ]
     ],
     "extra": {
       "eas": {
         "projectId": "fc01f6b3-0b37-40d9-96c0-5f04a607590b"
       }
+    },
+    "runtimeVersion": "1.0.0",
+    "updates": {
+      "url": "https://u.expo.dev/fc01f6b3-0b37-40d9-96c0-5f04a607590b"
     }
   }
 }

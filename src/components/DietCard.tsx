@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import { Alert, Pressable, StyleSheet, Text, View } from 'react-native';
-import { Dieta } from '@types/diet';
+import { Dieta } from '../types/diet';
 import { useThemeColors } from '@hooks/useTheme';
 
 interface DietCardProps {
@@ -18,15 +18,25 @@ const objetivoLabels: Record<Dieta['objetivo'], string> = {
   CUSTOM: 'Custom',
 };
 
-export const DietCard: FC<DietCardProps> = ({ diet, onOpen, onSetActive, onDuplicate, onDelete }) => {
+export const DietCard: FC<DietCardProps> = ({
+  diet,
+  onOpen,
+  onSetActive,
+  onDuplicate,
+  onDelete,
+}) => {
   const colors = useThemeColors();
   const borderColor = diet.ativa ? colors.primary : colors.border;
 
   const confirmDeletion = () => {
-    Alert.alert('Excluir dieta', `Tem certeza que deseja remover ${diet.nome}?`, [
-      { text: 'Cancelar', style: 'cancel' },
-      { text: 'Excluir', style: 'destructive', onPress: onDelete },
-    ]);
+    Alert.alert(
+      'Excluir dieta',
+      `Tem certeza que deseja remover ${diet.nome}?`,
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        { text: 'Excluir', style: 'destructive', onPress: onDelete },
+      ]
+    );
   };
 
   return (
@@ -37,26 +47,51 @@ export const DietCard: FC<DietCardProps> = ({ diet, onOpen, onSetActive, onDupli
     >
       <View style={styles.headerRow}>
         <Text style={[styles.title, { color: colors.text }]}>{diet.nome}</Text>
-        {diet.ativa && <Text style={[styles.badge, { backgroundColor: colors.primary }]}>Ativa</Text>}
+        {diet.ativa && (
+          <Text style={[styles.badge, { backgroundColor: colors.primary }]}>
+            Ativa
+          </Text>
+        )}
       </View>
-      <Text style={[styles.subtitle, { color: colors.muted }]}>{objetivoLabels[diet.objetivo]}</Text>
+      <Text style={[styles.subtitle, { color: colors.muted }]}>
+        {objetivoLabels[diet.objetivo]}
+      </Text>
       {diet.descricao ? (
-        <Text style={[styles.description, { color: colors.muted }]} numberOfLines={2}>
+        <Text
+          style={[styles.description, { color: colors.muted }]}
+          numberOfLines={2}
+        >
           {diet.descricao}
         </Text>
       ) : null}
 
       <View style={styles.footerRow}>
-        <Pressable accessibilityRole="button" onPress={onSetActive} style={styles.actionButton}>
+        <Pressable
+          accessibilityRole="button"
+          onPress={onSetActive}
+          style={styles.actionButton}
+        >
           <Text style={[styles.actionText, { color: colors.primary }]}>
             {diet.ativa ? 'Ativa' : 'Ativar'}
           </Text>
         </Pressable>
-        <Pressable accessibilityRole="button" onPress={onDuplicate} style={styles.actionButton}>
-          <Text style={[styles.actionText, { color: colors.muted }]}>Duplicar</Text>
+        <Pressable
+          accessibilityRole="button"
+          onPress={onDuplicate}
+          style={styles.actionButton}
+        >
+          <Text style={[styles.actionText, { color: colors.muted }]}>
+            Duplicar
+          </Text>
         </Pressable>
-        <Pressable accessibilityRole="button" onPress={confirmDeletion} style={styles.actionButton}>
-          <Text style={[styles.actionText, { color: colors.danger }]}>Excluir</Text>
+        <Pressable
+          accessibilityRole="button"
+          onPress={confirmDeletion}
+          style={styles.actionButton}
+        >
+          <Text style={[styles.actionText, { color: colors.danger }]}>
+            Excluir
+          </Text>
         </Pressable>
       </View>
     </Pressable>

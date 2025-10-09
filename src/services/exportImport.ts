@@ -1,6 +1,6 @@
 import * as DocumentPicker from 'expo-document-picker';
 import * as FileSystem from 'expo-file-system';
-import { AppConfig, Dieta, ExportPayload, HistoricoItem } from '@types/diet';
+import { AppConfig, Dieta, ExportPayload, HistoricoItem } from '../types/diet';
 import { mergeById } from './storage';
 
 const EXPORT_PREFIX = 'lanchinho-export';
@@ -11,7 +11,11 @@ export type ExportInput = {
   config: AppConfig;
 };
 
-export const createExportPayload = ({ dietas, historico, config }: ExportInput): ExportPayload => ({
+export const createExportPayload = ({
+  dietas,
+  historico,
+  config,
+}: ExportInput): ExportPayload => ({
   dietas,
   historico,
   config,
@@ -22,7 +26,10 @@ export const exportToFile = async (payload: ExportPayload) => {
   const timestamp = payload.exportedAt.replace(/[:.]/g, '-');
   const fileName = `${EXPORT_PREFIX}-${timestamp}.json`;
   const fileUri = `${FileSystem.documentDirectory ?? ''}${fileName}`;
-  await FileSystem.writeAsStringAsync(fileUri, JSON.stringify(payload, null, 2));
+  await FileSystem.writeAsStringAsync(
+    fileUri,
+    JSON.stringify(payload, null, 2)
+  );
   return fileUri;
 };
 
@@ -38,12 +45,17 @@ export const pickImportFile = async () => {
   return result.assets[0].uri;
 };
 
-export const loadExportPayload = async (uri: string): Promise<ExportPayload> => {
+export const loadExportPayload = async (
+  uri: string
+): Promise<ExportPayload> => {
   const content = await FileSystem.readAsStringAsync(uri);
   return JSON.parse(content) as ExportPayload;
 };
 
-export const mergeExportPayload = (current: ExportInput, incoming: ExportPayload): ExportInput => ({
+export const mergeExportPayload = (
+  current: ExportInput,
+  incoming: ExportPayload
+): ExportInput => ({
   config: { ...current.config, ...incoming.config },
   dietas: mergeById(current.dietas, incoming.dietas),
   historico: mergeById(current.historico, incoming.historico),
